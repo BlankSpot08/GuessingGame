@@ -1,4 +1,4 @@
-package main;
+package test;
 
 import java.util.Random;
 import java.util.Scanner;
@@ -38,7 +38,7 @@ public class Main {
                 }
 
                 else {
-                    intArray = IntStream.range(userGuest + 1, intArray.length).toArray();
+                    intArray = IntStream.range(userGuest + 1, intArray.length + 1).toArray();
                     System.out.println("TOO SMALL");
                 }
             }
