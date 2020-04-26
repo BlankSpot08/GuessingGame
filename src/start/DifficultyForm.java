@@ -8,6 +8,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import main.MainForm;
 
 public class DifficultyForm {
     private Scene scene;
@@ -50,15 +51,33 @@ public class DifficultyForm {
         normalButton.setPrefHeight(50);
         normalButton.setCursor(Cursor.HAND);
 
+        normalButton.setOnAction(e -> {
+            StartForm startForm = new StartForm("Normal");
+
+            window.setScene(startForm.scene());
+        });
+
         hardButton = new Button("Hard");
         hardButton.setPrefWidth(200);
         hardButton.setPrefHeight(50);
         hardButton.setCursor(Cursor.HAND);
 
+        hardButton.setOnAction(e -> {
+            StartForm startForm = new StartForm("Hard");
+
+            window.setScene(startForm.scene());
+        });
+
         backButton = new Button("Back");
         backButton.setPrefWidth(200);
         backButton.setPrefHeight(50);
         backButton.setCursor(Cursor.HAND);
+
+        backButton.setOnAction(e -> {
+            MainForm mainForm = new MainForm();
+
+            window.setScene(mainForm.scene(window));
+        });
 
         vBox.getChildren().addAll(difficultyLabel, easyButton, normalButton, hardButton, backButton);
 

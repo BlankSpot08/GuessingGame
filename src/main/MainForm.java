@@ -1,6 +1,7 @@
 package main;
 
 import javafx.application.Application;
+import javafx.beans.property.BooleanProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
@@ -33,10 +34,26 @@ public class MainForm extends Application {
         window.setTitle("Binary Search Project");
         window.setResizable(false);
 
+        window.setOnCloseRequest(e -> {
+            e.consume();
+
+            closeProgram(window);
+        });
+
         window.show();
     }
 
-    private Scene scene(Stage window) {
+    private void closeProgram(Stage window) {
+        AlertBox alertBox = new AlertBox(window.getX(), window.getY(), window.getHeight(), window.getWidth());
+
+        BooleanProperty answer = alertBox.display("Exit Program", "Are you sure?");
+
+        if (answer.getValue()) {
+            window.close();
+        }
+    }
+
+    public Scene scene(Stage window) {
         mainBorderPane = new BorderPane();
 
         mainBorderPane.setCenter(createVBox(window));
@@ -65,6 +82,10 @@ public class MainForm extends Application {
         quitButton.setPrefWidth(200);
         quitButton.setPrefHeight(50);
         quitButton.setCursor(Cursor.HAND);
+
+        quitButton.setOnAction(e -> {
+            closeProgram(window);
+        });
 
         vBox.getChildren().addAll(startButton, quitButton);
         vBox.setSpacing(10);
