@@ -8,6 +8,7 @@ import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -31,7 +32,7 @@ public class MainForm extends Application {
     @Override
     public void start(Stage window) {
         window.setScene(scene(window));
-        window.setTitle("Binary Search Project");
+        window.setTitle("Guessing Game");
         window.setResizable(false);
 
         window.setOnCloseRequest(e -> {
@@ -59,7 +60,7 @@ public class MainForm extends Application {
         mainBorderPane.setCenter(createVBox(window));
 
         scene = new Scene(mainBorderPane, 800, 600);
-        scene.getStylesheets().add("Choo.css");
+        scene.getStylesheets().add("Design.css");
 
         return scene;
     }

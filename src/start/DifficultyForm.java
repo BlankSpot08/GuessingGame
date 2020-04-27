@@ -22,7 +22,7 @@ public class DifficultyForm {
 
     public Scene scene(Stage window) {
         scene = new Scene(createBorderPane(window), 800, 600);
-        scene.getStylesheets().add("Choo.css");
+        scene.getStylesheets().add("Design.css");
 
         return scene;
     }
@@ -43,7 +43,7 @@ public class DifficultyForm {
         easyButton.setOnAction(e -> {
             StartForm startForm = new StartForm("Easy");
 
-            window.setScene(startForm.scene());
+            window.setScene(startForm.scene(window));
         });
 
         normalButton = new Button("Normal");
@@ -54,7 +54,7 @@ public class DifficultyForm {
         normalButton.setOnAction(e -> {
             StartForm startForm = new StartForm("Normal");
 
-            window.setScene(startForm.scene());
+            window.setScene(startForm.scene(window));
         });
 
         hardButton = new Button("Hard");
@@ -65,7 +65,7 @@ public class DifficultyForm {
         hardButton.setOnAction(e -> {
             StartForm startForm = new StartForm("Hard");
 
-            window.setScene(startForm.scene());
+            window.setScene(startForm.scene(window));
         });
 
         backButton = new Button("Back");
