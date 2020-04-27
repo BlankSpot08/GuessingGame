@@ -45,7 +45,7 @@ public class MainForm extends Application {
     }
 
     private void closeProgram(Stage window) {
-        AlertBox alertBox = new AlertBox(window.getX(), window.getY(), window.getHeight(), window.getWidth());
+        AlertBox alertBox = new AlertBox(window);
 
         BooleanProperty answer = alertBox.display("Exit Program", "Are you sure?");
 

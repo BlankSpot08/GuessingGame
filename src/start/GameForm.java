@@ -4,12 +4,14 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
+import main.AlertBox;
 import main.MainForm;
 
 import java.text.DecimalFormat;
@@ -19,11 +21,11 @@ import java.util.Scanner;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-public class StartForm {
+public class GameForm {
     private final Scanner inputReader = new Scanner(System.in);
     private final DecimalFormat decimalFormat = new DecimalFormat("0.0");
 
-    public StartForm(String difficulty) {
+    public GameForm(String difficulty, Stage window) {
 
         easy = false;
         normal = false;
@@ -33,21 +35,17 @@ public class StartForm {
 
         switch (difficulty) {
             case "Easy":
-                easy = true;
                 boxHeight = 40;
                 boxWidth = 82.5f;
+
                 boxHorizontal = 10;
                 boxVertical = 10;
-                movesLeft = 10;
+
+                movesLeft = 8;
 
                 buttonArray = new Button[100];
-//                intArray = IntStream.range(0, 101).toArray();
 
-//            button.setPrefWidth(boxWidth);
-//            button.setPrefHeight(boxHeight);
-//            button.setCursor(Cursor.HAND);
-
-                IntStream.range(1, 101).forEach(e -> {
+                IntStream.range(1, buttonArray.length + 1).forEach(e -> {
                     buttonArray[e - 1] = new Button(String.valueOf(e));
                     buttonArray[e - 1].setPrefWidth(boxWidth);
                     buttonArray[e - 1].setPrefHeight(boxHeight);
@@ -56,16 +54,19 @@ public class StartForm {
 
                     buttonArray[e - 1].setOnAction(j -> {
                         pickedANumber(Integer.parseInt(buttonArray[e - 1].getText()));
+
+                        updateMovesLeft();
+
+                        if (movesLeft == 0) {
+                            AlertBox alertBox = new AlertBox(window);
+                        }
                     });
                 });
 
-//                System.out.println(Arrays.toString(buttonArray));
             case "Normal":
                 normal = true;
-                boxes = 200;
             case "Hard":
                 hard = true;
-                boxes = 300;
         }
 
         i = 0;
@@ -78,7 +79,6 @@ public class StartForm {
     private boolean easy;
     private boolean normal;
     private boolean hard;
-    private int boxes;
     private int boxHorizontal;
     private int boxVertical;
     private int i;
@@ -106,6 +106,7 @@ public class StartForm {
     private Button mainMenuButton;
     private StackPane questionMarkStackPane;;
     private Label titleLabel;
+    private Label movesLeftLabel;
 
     public Scene scene(Stage window) {
         scene = new Scene(createBorderPane(window), 800, 600);
@@ -121,7 +122,6 @@ public class StartForm {
 
         for (int i = 0; i < boxVertical; i++) {
             buttonsVBox.getChildren().add(createHBoxes());
-//            System.out.println(buttonsVBox.getChildren().get(i) + " " + i);
         }
 
         return buttonsVBox;
@@ -134,7 +134,6 @@ public class StartForm {
 
         for (int j = 0; j < boxHorizontal; j++, i++) {
             buttonsHBox.getChildren().add(buttonArray[i]);
-//            System.out.println(buttonsHBox.getChildren().get(j) + " " + j);
         }
 
         return buttonsHBox;
@@ -155,32 +154,27 @@ public class StartForm {
             return true;
         }
 
-        System.out.println("VALUE: " + pressedValue);
-
         int row = (pressedValue >= 10
                 ? pressedValue % 10 == 0 ? pressedValue / 10 : pressedValue / 10 + 1
                 : 1);
+
         int column = (int) (((pressedValue / 10f) - (row - 1)) * 10);
 
-        System.out.println("ROW: " + row);
-        System.out.println("COLUMN : " + column);
-
         int k = pressedValue - 1;
-        System.out.println("K : " + k);
         if (pressedValue < toBeSearched) {
-            System.out.println("AGAIN");
+
             for (int i = row; i >= 0 && k >= 0; i--) {
+
                 for (int j = row == i ? column : 10; j >= 0 && k >= 0; j--, k--) {
                     buttonArray[k].setDisable(true);
-                    System.out.println(buttonArray[k] + " " + k);
                 }
-                System.out.println("\nNEXT LINE");
             }
         }
 
         else {
-            System.out.println("SIZE: " + buttonsHBox.getChildren().size());
+
             for (int i = row; i <= buttonsVBox.getChildren().size(); i++) {
+
                 for (int j = row == i ? column - 1 : 0; j <= buttonsHBox.getChildren().size() && k < buttonArray.length; j++, k++) {
                     buttonArray[k].setDisable(true);
                 }
@@ -188,12 +182,6 @@ public class StartForm {
         }
 
         return false;
-    }
-
-    private HBox createTopRightHBox() {
-        topRightHBox = new HBox();
-
-        return topRightHBox;
     }
 
     private HBox createTopCenterHBox() {
@@ -214,13 +202,28 @@ public class StartForm {
         topHbox = new HBox();
         topHbox.setPadding(new Insets(10));
 
-        topHbox.getChildren().addAll(createTopCenterHBox(), createTopRightHBox());
+        topHbox.getChildren().addAll(createTopCenterHBox());
 
         return topHbox;
     }
 
+    private void updateMovesLeft() {
+        movesLeft--;
+
+        if (movesLeft <= 3) {
+            movesLeftLabel.setStyle("-fx-text-fill: #C70039");
+        }
+
+        else {
+            movesLeftLabel.setStyle("-fx-text-fill: #2B580C");
+        }
+
+        movesLeftLabel.setText("Moves Left: " + movesLeft);
+    }
+
     private HBox createBottomRightHBox(Stage window) {
         bottomRightHBox = new HBox();
+        bottomRightHBox.setSpacing(12);
         bottomRightHBox.setAlignment(Pos.TOP_RIGHT);
         HBox.setHgrow(bottomRightHBox, Priority.ALWAYS);
 
@@ -235,7 +238,11 @@ public class StartForm {
             window.setScene(mainForm.scene(window));
         });
 
-        bottomRightHBox.getChildren().add(mainMenuButton);
+        movesLeftLabel = new Label();
+        movesLeftLabel.setFont(Font.font("Arial", 22));
+        movesLeftLabel.setText("Moves Left: " + movesLeft);
+
+        bottomRightHBox.getChildren().addAll(movesLeftLabel, mainMenuButton);
 
         return bottomRightHBox;
     }
@@ -295,29 +302,9 @@ public class StartForm {
     private BorderPane createBorderPane(Stage window) {
         borderPane = new BorderPane();
 
+        borderPane.setBottom(createBottomBorderPane(window));
         borderPane.setTop(createTopHBox());
         borderPane.setCenter(createBoxes());
-        borderPane.setBottom(createBottomBorderPane(window));
-
-//        System.out.print("DISABLE WHICH: ");
-//        int which = inputReader.nextInt();
-//
-//        int row = (which >= 10 ? which % 10 == 0 ? which / 10 : which / 10 + 1 : 1) - 1;
-//        System.out.println("ROW: " + row);
-//
-////        float column = Float.parseFloat(decimalFormat.format()));
-//        int column = (int) (((which / 10f) - row) * 10);
-//
-//        System.out.println("COLUMN: " + column);
-//
-//        int alternateRow = Integer.parseInt(String.valueOf(String.valueOf(which).charAt(0)));
-
-//        System.out.println("ALTERNATE ROW: " + alternateRow);
-//
-//        int alternateColumn = String.valueOf(which).length() == 2 ?
-//                Integer.parseInt(String.valueOf(String.valueOf(which).charAt(1))) : 0;
-//
-//        System.out.println("ALTERNATE COLUMN: " + alternateColumn);
 
         return borderPane;
     }

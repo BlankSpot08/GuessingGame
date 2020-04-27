@@ -41,9 +41,9 @@ public class DifficultyForm {
         easyButton.setCursor(Cursor.HAND);
 
         easyButton.setOnAction(e -> {
-            StartForm startForm = new StartForm("Easy");
+            GameForm gameForm = new GameForm("Easy", window);
 
-            window.setScene(startForm.scene(window));
+            window.setScene(gameForm.scene(window));
         });
 
         normalButton = new Button("Normal");
@@ -52,9 +52,9 @@ public class DifficultyForm {
         normalButton.setCursor(Cursor.HAND);
 
         normalButton.setOnAction(e -> {
-            StartForm startForm = new StartForm("Normal");
+            GameForm gameForm = new GameForm("Normal", window);
 
-            window.setScene(startForm.scene(window));
+            window.setScene(gameForm.scene(window));
         });
 
         hardButton = new Button("Hard");
@@ -63,9 +63,9 @@ public class DifficultyForm {
         hardButton.setCursor(Cursor.HAND);
 
         hardButton.setOnAction(e -> {
-            StartForm startForm = new StartForm("Hard");
+            GameForm gameForm = new GameForm("Hard", window);
 
-            window.setScene(startForm.scene(window));
+            window.setScene(gameForm.scene(window));
         });
 
         backButton = new Button("Back");
