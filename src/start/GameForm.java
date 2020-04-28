@@ -6,7 +6,10 @@ import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.layout.*;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import main.AlertBox;
@@ -14,7 +17,6 @@ import main.MainForm;
 
 import java.util.Arrays;
 import java.util.Random;
-import java.util.stream.IntStream;
 
 public class GameForm {
     private final Random randomNumberGenerator = new Random();
@@ -41,19 +43,21 @@ public class GameForm {
 
         toBeSearched = randomNumberGenerator.nextInt(buttonArray.length) == 0 ? randomNumberGenerator.nextInt(buttonArray.length) : randomNumberGenerator.nextInt(buttonArray.length);
 
-        IntStream.range(1, buttonArray.length + 1).forEach(e -> {
-            buttonArray[e - 1] = new Button(String.valueOf(e));
-            buttonArray[e - 1].setPrefWidth(boxWidth);
-            buttonArray[e - 1].setPrefHeight(boxHeight);
-            buttonArray[e - 1].setCursor(Cursor.HAND);
+        // For Loop Way
+        for (int i = 0; i < buttonArray.length; i++) {
+            buttonArray[i] = new Button(String.valueOf(i + 1));
+            buttonArray[i].setPrefWidth(boxWidth);
+            buttonArray[i].setPrefHeight(boxHeight);
+            buttonArray[i].setCursor(Cursor.HAND);
 
-            function.Button.hovering(buttonArray[e - 1]);
+            function.Button.hovering(buttonArray[i]);
 
-            buttonArray[e - 1].setOnAction(j -> {
+            int finalI = i;
+            buttonArray[i].setOnAction(e -> {
                 updateMovesLeft();
 
-                if (!pickedANumber(Integer.parseInt(buttonArray[e - 1].getText()), window)) {
-                    buttonArray[e - 1].setId("button-clicked");
+                if (!pickedANumber(Integer.parseInt(buttonArray[finalI].getText()), window)) {
+                    buttonArray[finalI].setId("button-clicked");
                 }
 
                 // LOSE
@@ -65,7 +69,34 @@ public class GameForm {
                     restart();
                 }
             });
-        });
+        }
+
+        // IntStream Way
+//        IntStream.range(1, buttonArray.length + 1).forEach(e -> {
+//            buttonArray[e - 1] = new Button(String.valueOf(e));
+//            buttonArray[e - 1].setPrefWidth(boxWidth);
+//            buttonArray[e - 1].setPrefHeight(boxHeight);
+//            buttonArray[e - 1].setCursor(Cursor.HAND);
+//
+//            function.Button.hovering(buttonArray[e - 1]);
+//
+//            buttonArray[e - 1].setOnAction(j -> {
+//                updateMovesLeft();
+//
+//                if (!pickedANumber(Integer.parseInt(buttonArray[e - 1].getText()), window)) {
+//                    buttonArray[e - 1].setId("button-clicked");
+//                }
+//
+//                // LOSE
+//                if (movesLeft == 0) {
+//                    AlertBox alertBox = new AlertBox(window);
+//
+//                    alertBox.display("You Lost", "You Lost", "Stupid", "Stupid");
+//
+//                    restart();
+//                }
+//            });
+//        });
     }
 
     private void setup(float boxHeight, float boxHorizontal, float boxVertical, Button[] buttonArray) {
@@ -86,7 +117,7 @@ public class GameForm {
 
     private int toBeSearched;
 
-    private float boxWidth;
+    private final float boxWidth;
     private float boxHeight;
 
     private Scene scene;
@@ -156,34 +187,24 @@ public class GameForm {
             return true;
         }
 
-        int numberOfColumns = buttonsHBox.getChildren().size();
-        int numberOfRows = buttonsVBox.getChildren().size();
-
-        int row = (pressedValue >= numberOfColumns ?
-                pressedValue % numberOfColumns == 0 ? pressedValue / numberOfColumns : pressedValue / numberOfColumns + 1
-                : 1);
-
-        int column = pressedValue - ((row - 1) * numberOfColumns);
-
         int k = pressedValue - 1;
         if (pressedValue < toBeSearched) {
-
-            for (int i = row; i >= 0 && k >= 0; i--) {
-
-                for (int j = row == i ? column : numberOfColumns; j >= 0 && k >= 0; j--, k--) {
-                    buttonArray[k].setDisable(true);
-                }
+            // For Loop Way
+            for (int i = k; i >= 0; i--) {
+                buttonArray[i].setDisable(true);
             }
         }
 
         else {
-
-            for (int i = row; i <= numberOfRows; i++) {
-
-                for (int j = row == i ? column - 1 : 0; j <= numberOfColumns && k < buttonArray.length; j++, k++) {
-                    buttonArray[k].setDisable(true);
-                }
+            // For Loop Way
+            for (int i = k; i < buttonArray.length; i++) {
+                buttonArray[i].setDisable(true);
             }
+
+            // IntStream Way
+//            IntStream.range(k, buttonArray.length).forEachOrdered(e -> {
+//                buttonArray[e].setDisable(true);
+//            });
         }
 
         return false;
