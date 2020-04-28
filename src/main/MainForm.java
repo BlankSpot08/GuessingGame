@@ -7,10 +7,13 @@ import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 import start.DifficultyForm;
 
@@ -22,18 +25,17 @@ public class MainForm extends Application {
 
     private Scene scene;
     private BorderPane mainBorderPane;
-    private BorderPane bottomBorderPane;
-    private HBox difficultiesHBox;
-    private HBox rightBotHBox;
     private Button startButton;
     private Button quitButton;
     private VBox vBox;
+    private Label titleLabel;
 
     @Override
     public void start(Stage window) {
         window.setScene(scene(window));
         window.setTitle("Guessing Game");
         window.setResizable(false);
+        window.getIcons().add(new Image("/icons/windowIcon.png"));
 
         window.setOnCloseRequest(e -> {
             e.consume();
@@ -47,11 +49,22 @@ public class MainForm extends Application {
     private void closeProgram(Stage window) {
         AlertBox alertBox = new AlertBox(window);
 
-        BooleanProperty answer = alertBox.display("Exit Program", "Are you sure?");
+        BooleanProperty answer = alertBox.display("Exit Program", "Are you sure?", "Yes", "No");
 
         if (answer.getValue()) {
             window.close();
         }
+    }
+
+    public Label createTitle() {
+        titleLabel = new Label();
+        titleLabel.setText("Guessing Game");
+        titleLabel.setFont(Font.font("Arial", FontWeight.EXTRA_BOLD, 50));
+        titleLabel.setAlignment(Pos.CENTER);
+        titleLabel.setPadding(new Insets(0, 0, 100, 0));
+        VBox.setVgrow(titleLabel, Priority.ALWAYS);
+
+        return titleLabel;
     }
 
     public Scene scene(Stage window) {
@@ -79,6 +92,8 @@ public class MainForm extends Application {
             window.setScene(difficultyForm.scene(window));
         });
 
+        function.Button.hovering(startButton);
+
         quitButton = new Button("Quit");
         quitButton.setPrefWidth(200);
         quitButton.setPrefHeight(50);
@@ -88,7 +103,9 @@ public class MainForm extends Application {
             closeProgram(window);
         });
 
-        vBox.getChildren().addAll(startButton, quitButton);
+        function.Button.hovering(quitButton);
+
+        vBox.getChildren().addAll(createTitle(), startButton, quitButton);
         vBox.setSpacing(10);
         vBox.setAlignment(Pos.CENTER);
         vBox.setPadding(new Insets(0, 0, 0, 0));

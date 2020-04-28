@@ -4,7 +4,6 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
@@ -14,77 +13,79 @@ import javafx.stage.Stage;
 import main.AlertBox;
 import main.MainForm;
 
-import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.Random;
-import java.util.Scanner;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 public class GameForm {
-    private final Scanner inputReader = new Scanner(System.in);
-    private final DecimalFormat decimalFormat = new DecimalFormat("0.0");
+    private final Random randomNumberGenerator = new Random();
 
     public GameForm(String difficulty, Stage window) {
-
-        easy = false;
-        normal = false;
-        hard = false;
-
-        toBeSearched = new Random().nextInt(100);
-
         switch (difficulty) {
             case "Easy":
-                boxHeight = 40;
-                boxWidth = 82.5f;
-
-                boxHorizontal = 10;
-                boxVertical = 10;
-
-                movesLeft = 8;
-
-                buttonArray = new Button[100];
-
-                IntStream.range(1, buttonArray.length + 1).forEach(e -> {
-                    buttonArray[e - 1] = new Button(String.valueOf(e));
-                    buttonArray[e - 1].setPrefWidth(boxWidth);
-                    buttonArray[e - 1].setPrefHeight(boxHeight);
-                    buttonArray[e - 1].setCursor(Cursor.HAND);
-                    buttonArray[e - 1].setStyle("-fx-background-color: #123456; -fx-text-fill: #FFFFFF");
-
-                    buttonArray[e - 1].setOnAction(j -> {
-                        pickedANumber(Integer.parseInt(buttonArray[e - 1].getText()));
-
-                        updateMovesLeft();
-
-                        if (movesLeft == 0) {
-                            AlertBox alertBox = new AlertBox(window);
-                        }
-                    });
-                });
-
+                setup(40, 10, 10, new Button[100]);
+                break;
             case "Normal":
-                normal = true;
+                setup(20, 12, 15, new Button[180]);
+                break;
             case "Hard":
-                hard = true;
+                setup(5, 20, 15, new Button[300]);
+                break;
+            default:
+                break;
         }
 
-        i = 0;
+        boxWidth = 82.5f;
+        movesLeft = 8;
+        index = 0;
 
-        System.out.println("TO BE SEARCHED: " + toBeSearched);
+        toBeSearched = randomNumberGenerator.nextInt(buttonArray.length) == 0 ? randomNumberGenerator.nextInt(buttonArray.length) : randomNumberGenerator.nextInt(buttonArray.length);
+        System.out.println(toBeSearched);
+
+        IntStream.range(1, buttonArray.length + 1).forEach(e -> {
+            buttonArray[e - 1] = new Button(String.valueOf(e));
+            buttonArray[e - 1].setPrefWidth(boxWidth);
+            buttonArray[e - 1].setPrefHeight(boxHeight);
+            buttonArray[e - 1].setCursor(Cursor.HAND);
+
+            function.Button.hovering(buttonArray[e - 1]);
+
+            buttonArray[e - 1].setOnAction(j -> {
+                updateMovesLeft();
+
+                if (!pickedANumber(Integer.parseInt(buttonArray[e - 1].getText()), window)) {
+                    buttonArray[e - 1].setId("button-clicked");
+                }
+
+                // LOSE
+                if (movesLeft == 0) {
+                    AlertBox alertBox = new AlertBox(window);
+
+                    alertBox.display("You Lost", "You Lost", "Stupid", "Stupid");
+
+                    restart();
+                }
+            });
+        });
+    }
+
+    private void setup(float boxHeight, float boxHorizontal, float boxVertical, Button[] buttonArray) {
+        this.boxHeight = boxHeight;
+
+        this.boxHorizontal = boxHorizontal;
+        this.boxVertical = boxVertical;
+
+        this.buttonArray = buttonArray;
     }
 
     private Button[] buttonArray;
 
-    private boolean easy;
-    private boolean normal;
-    private boolean hard;
-    private int boxHorizontal;
-    private int boxVertical;
-    private int i;
+    private float boxHorizontal;
+    private float boxVertical;
     private int movesLeft;
+    private int index;
 
-    private final int toBeSearched;
+    private int toBeSearched;
 
     private float boxWidth;
     private float boxHeight;
@@ -98,13 +99,11 @@ public class GameForm {
     private HBox bottomRightHBox;
     private HBox topHbox;
     private HBox topCenterHBox;
-    private HBox topRightHBox;
     private VBox buttonsVBox;
     private Button startButton;
     private Button restartButton;
     private Button giveUpButton;
     private Button mainMenuButton;
-    private StackPane questionMarkStackPane;;
     private Label titleLabel;
     private Label movesLeftLabel;
 
@@ -132,40 +131,47 @@ public class GameForm {
         buttonsHBox.setPadding(new Insets(0.5, 5, 0, 5));
         buttonsHBox.setSpacing(1);
 
-        for (int j = 0; j < boxHorizontal; j++, i++) {
-            buttonsHBox.getChildren().add(buttonArray[i]);
+        for (int j = 0; j < boxHorizontal; j++, index++) {
+            buttonsHBox.getChildren().add(buttonArray[index]);
         }
 
         return buttonsHBox;
     }
 
-    private void pickedANumber(int pressedValue) {
+    private boolean pickedANumber(int pressedValue, Stage window) {
         if (binarySearch(pressedValue)) {
-            System.out.println("Correct Answer");
+            AlertBox alertBox = new AlertBox(window);
+            alertBox.display("You won", "But no cookie for you", "Basic" , "Basic");
+
+            restart();
+
+            return true;
         }
 
-        else {
-
-        }
+        return false;
     }
 
     private boolean binarySearch(int pressedValue) {
         if (pressedValue == toBeSearched) {
+            restart();
             return true;
         }
 
-        int row = (pressedValue >= 10
-                ? pressedValue % 10 == 0 ? pressedValue / 10 : pressedValue / 10 + 1
+        int numberOfColumns = buttonsHBox.getChildren().size();
+        int numberOfRows = buttonsVBox.getChildren().size();
+
+        int row = (pressedValue >= numberOfColumns ?
+                pressedValue % numberOfColumns == 0 ? pressedValue / numberOfColumns : pressedValue / numberOfColumns + 1
                 : 1);
 
-        int column = (int) (((pressedValue / 10f) - (row - 1)) * 10);
+        int column = pressedValue - ((row - 1) * numberOfColumns);
 
         int k = pressedValue - 1;
         if (pressedValue < toBeSearched) {
 
             for (int i = row; i >= 0 && k >= 0; i--) {
 
-                for (int j = row == i ? column : 10; j >= 0 && k >= 0; j--, k--) {
+                for (int j = row == i ? column : numberOfColumns; j >= 0 && k >= 0; j--, k--) {
                     buttonArray[k].setDisable(true);
                 }
             }
@@ -173,9 +179,9 @@ public class GameForm {
 
         else {
 
-            for (int i = row; i <= buttonsVBox.getChildren().size(); i++) {
+            for (int i = row; i <= numberOfRows; i++) {
 
-                for (int j = row == i ? column - 1 : 0; j <= buttonsHBox.getChildren().size() && k < buttonArray.length; j++, k++) {
+                for (int j = row == i ? column - 1 : 0; j <= numberOfColumns && k < buttonArray.length; j++, k++) {
                     buttonArray[k].setDisable(true);
                 }
             }
@@ -190,8 +196,7 @@ public class GameForm {
         HBox.setHgrow(topCenterHBox, Priority.ALWAYS);
 
         titleLabel = new Label("Guess The Number: ");
-        titleLabel.setFont(Font.font("Arial", FontWeight.LIGHT, 28));
-        titleLabel.setStyle("-fx-text-fill: #43D8C9");
+        titleLabel.setFont(Font.font(28));
 
         topCenterHBox.getChildren().add(titleLabel);
 
@@ -209,14 +214,6 @@ public class GameForm {
 
     private void updateMovesLeft() {
         movesLeft--;
-
-        if (movesLeft <= 3) {
-            movesLeftLabel.setStyle("-fx-text-fill: #C70039");
-        }
-
-        else {
-            movesLeftLabel.setStyle("-fx-text-fill: #2B580C");
-        }
 
         movesLeftLabel.setText("Moves Left: " + movesLeft);
     }
@@ -238,8 +235,11 @@ public class GameForm {
             window.setScene(mainForm.scene(window));
         });
 
+        function.Button.hovering(mainMenuButton);
+
         movesLeftLabel = new Label();
-        movesLeftLabel.setFont(Font.font("Arial", 22));
+        movesLeftLabel.setFont(Font.font(22));
+        movesLeftLabel.setId("score-custom");
         movesLeftLabel.setText("Moves Left: " + movesLeft);
 
         bottomRightHBox.getChildren().addAll(movesLeftLabel, mainMenuButton);
@@ -248,7 +248,17 @@ public class GameForm {
     }
 
     private void restart() {
+        toBeSearched = randomNumberGenerator.nextInt(buttonArray.length) == 0 ? randomNumberGenerator.nextInt(buttonArray.length) : randomNumberGenerator.nextInt(buttonArray.length);
 
+        Arrays.stream(buttonArray).forEach( e -> {
+            e.setId("button-default");
+            e.setDisable(false);
+        });
+
+        movesLeft = 8;
+
+        movesLeftLabel.setText("Moves Left: " + movesLeft);
+        movesLeftLabel.setId("score-custom");
     }
 
     private HBox createBottomLeftHBox() {
@@ -262,10 +272,18 @@ public class GameForm {
         startButton.setPrefHeight(50);
         startButton.setCursor(Cursor.HAND);
 
+        function.Button.hovering(startButton);
+
         giveUpButton = new Button("Give Up");
         giveUpButton.setPrefWidth(150);
         giveUpButton.setPrefHeight(50);
         giveUpButton.setCursor(Cursor.HAND);
+
+        giveUpButton.setOnAction(e -> {
+            buttonArray[toBeSearched - 1].setId("button-giveup");
+        });
+
+        function.Button.hovering(giveUpButton);
 
         restartButton = new Button("Restart");
         restartButton.setPrefWidth(150);
@@ -276,7 +294,9 @@ public class GameForm {
             restart();
         });
 
-        bottomLeftHBox.getChildren().addAll(startButton, giveUpButton, restartButton);
+        function.Button.hovering(restartButton);
+
+        bottomLeftHBox.getChildren().addAll(giveUpButton, restartButton);
 
         return bottomLeftHBox;
     }
@@ -292,7 +312,6 @@ public class GameForm {
 
     private BorderPane createBottomBorderPane(Stage window) {
         bottomBorderPane = new BorderPane();
-        bottomBorderPane.setStyle("-fx-background-color: #654321");
 
         bottomBorderPane.setTop(createBottomHBox(window));
 

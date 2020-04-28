@@ -1,3 +1,30 @@
 .root {
-    -fx-background-color: #123456;
+    -fx-background-color: linear-gradient(EDC7B7, EEE2DC);
+}
+
+.button {
+    -fx-background-color: #EDC7B7;
+    -fx-text-fill: #AC3B61;
+}
+
+.label {
+    -fx-text-fill: #AC3B61;
+}
+
+#button-clicked {
+    -fx-background-color: #AC3B61;
+    -fx-text-fill: #EDC7B7;
+}
+
+#button-hovered {
+    -fx-background-color: #EEE2DC;
+}
+
+#button-default {
+    -fx-background-color: #EDC7B7;
+    -fx-text-fill: #AC3B61;
+}
+
+#button-giveup {
+    -fx-background-color: #FFFFFF;
 }

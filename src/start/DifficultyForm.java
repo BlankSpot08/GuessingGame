@@ -7,6 +7,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import main.MainForm;
 
@@ -34,6 +35,7 @@ public class DifficultyForm {
         vBox.setSpacing(10);
 
         difficultyLabel = new Label("Difficulty: ");
+        difficultyLabel.setFont(Font.font(22));
 
         easyButton = new Button("Easy");
         easyButton.setPrefWidth(200);
@@ -46,6 +48,8 @@ public class DifficultyForm {
             window.setScene(gameForm.scene(window));
         });
 
+        function.Button.hovering(easyButton);
+
         normalButton = new Button("Normal");
         normalButton.setPrefWidth(200);
         normalButton.setPrefHeight(50);
@@ -56,6 +60,8 @@ public class DifficultyForm {
 
             window.setScene(gameForm.scene(window));
         });
+
+        function.Button.hovering(normalButton);
 
         hardButton = new Button("Hard");
         hardButton.setPrefWidth(200);
@@ -68,6 +74,8 @@ public class DifficultyForm {
             window.setScene(gameForm.scene(window));
         });
 
+        function.Button.hovering(hardButton);
+
         backButton = new Button("Back");
         backButton.setPrefWidth(200);
         backButton.setPrefHeight(50);
@@ -78,6 +86,8 @@ public class DifficultyForm {
 
             window.setScene(mainForm.scene(window));
         });
+
+        function.Button.hovering(backButton);
 
         vBox.getChildren().addAll(difficultyLabel, easyButton, normalButton, hardButton, backButton);
 
