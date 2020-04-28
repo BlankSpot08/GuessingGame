@@ -23,9 +23,15 @@ public class DifficultyForm {
 
     public Scene scene(Stage window) {
         scene = new Scene(createBorderPane(window), 800, 600);
-        scene.getStylesheets().add("Design.css");
+        scene.getStylesheets().add("css/Design.css");
 
         return scene;
+    }
+
+    private void difficultyButtonsFunction(String difficulty, Stage window) {
+        GameForm gameForm = new GameForm(difficulty, window);
+
+        window.setScene(gameForm.scene(window));
     }
 
     private VBox createVBox(Stage window) {
@@ -43,9 +49,7 @@ public class DifficultyForm {
         easyButton.setCursor(Cursor.HAND);
 
         easyButton.setOnAction(e -> {
-            GameForm gameForm = new GameForm("Easy", window);
-
-            window.setScene(gameForm.scene(window));
+            difficultyButtonsFunction(easyButton.getText(), window);
         });
 
         function.Button.hovering(easyButton);
@@ -56,9 +60,7 @@ public class DifficultyForm {
         normalButton.setCursor(Cursor.HAND);
 
         normalButton.setOnAction(e -> {
-            GameForm gameForm = new GameForm("Normal", window);
-
-            window.setScene(gameForm.scene(window));
+            difficultyButtonsFunction(normalButton.getText(), window);
         });
 
         function.Button.hovering(normalButton);
@@ -69,9 +71,7 @@ public class DifficultyForm {
         hardButton.setCursor(Cursor.HAND);
 
         hardButton.setOnAction(e -> {
-            GameForm gameForm = new GameForm("Hard", window);
-
-            window.setScene(gameForm.scene(window));
+            difficultyButtonsFunction(hardButton.getText(), window);
         });
 
         function.Button.hovering(hardButton);

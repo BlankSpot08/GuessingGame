@@ -52,7 +52,7 @@ public class AlertBox {
         vBox.getChildren().addAll(messageLabel, createHBox(trueButtonMessage, falseButtonMessage));
 
         scene = new Scene(vBox, 250, 100);
-        scene.getStylesheets().add("Design.css");
+        scene.getStylesheets().add("css/Design.css");
 
         scene.setOnKeyReleased(event -> {
             if (event.getCode() == KeyCode.ESCAPE) {

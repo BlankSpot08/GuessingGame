@@ -46,6 +46,17 @@ public class MainForm extends Application {
         window.show();
     }
 
+    public Scene scene(Stage window) {
+        mainBorderPane = new BorderPane();
+
+        mainBorderPane.setCenter(createVBox(window));
+
+        scene = new Scene(mainBorderPane, 800, 600);
+        scene.getStylesheets().add("css/Design.css");
+
+        return scene;
+    }
+
     private void closeProgram(Stage window) {
         AlertBox alertBox = new AlertBox(window);
 
@@ -65,17 +76,6 @@ public class MainForm extends Application {
         VBox.setVgrow(titleLabel, Priority.ALWAYS);
 
         return titleLabel;
-    }
-
-    public Scene scene(Stage window) {
-        mainBorderPane = new BorderPane();
-
-        mainBorderPane.setCenter(createVBox(window));
-
-        scene = new Scene(mainBorderPane, 800, 600);
-        scene.getStylesheets().add("Design.css");
-
-        return scene;
     }
 
     private VBox createVBox(Stage window) {

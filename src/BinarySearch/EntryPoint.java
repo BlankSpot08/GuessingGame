@@ -1,4 +1,4 @@
-package test;
+package BinarySearch;
 
 public class EntryPoint {
     public static void main(String... args) {

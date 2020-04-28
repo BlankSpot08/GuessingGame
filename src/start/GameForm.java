@@ -8,7 +8,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 import main.AlertBox;
 import main.MainForm;
@@ -19,6 +18,7 @@ import java.util.stream.IntStream;
 
 public class GameForm {
     private final Random randomNumberGenerator = new Random();
+
 
     public GameForm(String difficulty, Stage window) {
         switch (difficulty) {
@@ -40,7 +40,6 @@ public class GameForm {
         index = 0;
 
         toBeSearched = randomNumberGenerator.nextInt(buttonArray.length) == 0 ? randomNumberGenerator.nextInt(buttonArray.length) : randomNumberGenerator.nextInt(buttonArray.length);
-        System.out.println(toBeSearched);
 
         IntStream.range(1, buttonArray.length + 1).forEach(e -> {
             buttonArray[e - 1] = new Button(String.valueOf(e));
@@ -109,7 +108,7 @@ public class GameForm {
 
     public Scene scene(Stage window) {
         scene = new Scene(createBorderPane(window), 800, 600);
-        scene.getStylesheets().add("Design.css");
+        scene.getStylesheets().add("css/Design.css");
 
         return scene;
     }
